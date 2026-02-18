@@ -1,0 +1,9 @@
+{
+  "id": "file-mover",
+  "name": "File Mover",
+  "version": "1.0.0",
+  "minAppVersion": "1.0.0",
+  "description": "Archive files to a mirror path or relocate files based on frontmatter recommendations.",
+  "author": "Grae",
+  "isDesktopOnly": false
+}
