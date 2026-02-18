@@ -63,6 +63,11 @@ export default class FileMoverPlugin extends Plugin {
 		// Ensure the path ends with .md if it doesn't have an extension
 		const destination = recommendedPath.includes(".") ? recommendedPath : `${recommendedPath}.md`;
 
+		if (!this.isValidVaultPath(destination)) {
+			new Notice("Invalid path: must be a relative path within the vault");
+			return;
+		}
+
 		if (this.settings.confirmBeforeMove) {
 			new ConfirmMoveModal(this.app, file.name, destination, () => {
 				this.relocateFile(file, destination);
@@ -137,6 +142,15 @@ export default class FileMoverPlugin extends Plugin {
 
 			return content.replace(/^---\n[\s\S]*?\n---/, `---\n${filtered.join("\n")}\n---`);
 		});
+	}
+
+	isValidVaultPath(filePath: string): boolean {
+		// Block absolute paths (Windows and Unix)
+		if (/^[a-zA-Z]:/.test(filePath) || filePath.startsWith("/")) return false;
+		// Block path traversal
+		const segments = filePath.replace(/\\/g, "/").split("/");
+		if (segments.some((s) => s === "..")) return false;
+		return true;
 	}
 
 	async ensureParentFolders(filePath: string) {
