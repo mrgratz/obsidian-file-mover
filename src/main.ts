@@ -1,4 +1,4 @@
-import { App, Modal, Notice, Plugin, PluginSettingTab, Setting, TFile, TFolder } from "obsidian";
+import { App, Modal, Notice, Plugin, PluginSettingTab, Setting, TFile } from "obsidian";
 
 interface FileMoverSettings {
 	archiveFolder: string;
@@ -52,7 +52,7 @@ export default class FileMoverPlugin extends Plugin {
 
 		if (this.settings.confirmBeforeMove) {
 			new ConfirmMoveModal(this.app, file.name, destination, () => {
-				this.archiveFile(file, destination);
+				void this.archiveFile(file, destination);
 			}).open();
 		} else {
 			await this.archiveFile(file, destination);
@@ -70,7 +70,7 @@ export default class FileMoverPlugin extends Plugin {
 
 		if (this.settings.confirmBeforeMove) {
 			new ConfirmMoveModal(this.app, file.name, destination, () => {
-				this.relocateFile(file, destination);
+				void this.relocateFile(file, destination);
 			}).open();
 		} else {
 			await this.relocateFile(file, destination);
@@ -229,7 +229,7 @@ class FileMoverSettingTab extends PluginSettingTab {
 			.setDesc("Root folder for archived files. Mirror paths are created under this folder.")
 			.addText((text) =>
 				text
-					.setPlaceholder("90_Archive")
+					.setPlaceholder("Folder name")
 					.setValue(this.plugin.settings.archiveFolder)
 					.onChange(async (value) => {
 						this.plugin.settings.archiveFolder = value;
@@ -242,7 +242,7 @@ class FileMoverSettingTab extends PluginSettingTab {
 			.setDesc("Frontmatter property name used for the relocate action.")
 			.addText((text) =>
 				text
-					.setPlaceholder("recommended_path")
+					.setPlaceholder("Property name")
 					.setValue(this.plugin.settings.recommendedPathProperty)
 					.onChange(async (value) => {
 						this.plugin.settings.recommendedPathProperty = value;
